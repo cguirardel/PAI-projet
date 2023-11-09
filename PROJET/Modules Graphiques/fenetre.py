@@ -25,8 +25,7 @@ class MaFenetre(QTabWidget):
         super().__init__()
         height = 400
         width = 500
-        #self.setFixedWidth(width)
-        #self.setFixedHeight(height)
+        self.resize(width,height)
         self.setWindowIcon(QIcon('images/Olympic_flag.png'))
         self.setWindowTitle("OlymPYcs")
 
