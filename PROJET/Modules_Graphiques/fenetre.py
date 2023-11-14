@@ -12,7 +12,6 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 import numpy as np
-import matplotlib.pyplot as plt
 
 from Modules_Graphiques.guira_slider import Slider
 from Modules_Graphiques.guira_onglets import Ong_Carte, Ong_Age, Ong_PIB, Ong_Rech
