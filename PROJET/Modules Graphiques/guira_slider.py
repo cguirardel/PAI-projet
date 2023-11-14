@@ -4,7 +4,6 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from superqt import QRangeSlider
 
-
 class Slider(QWidget):
     def __init__(self):
         super().__init__()
@@ -43,3 +42,5 @@ class Slider(QWidget):
         stop = self.slider.value()[1] 
         s = f'De {start} à {stop}'
         self.label.setText(s)
+
+
