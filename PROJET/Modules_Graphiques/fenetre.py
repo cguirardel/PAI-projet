@@ -25,7 +25,7 @@ class MaFenetre(QTabWidget):
         super().__init__()
         height = 400
         width = 500
-        self.resize(width,height)
+        #self.resize(width,height)
         self.setWindowIcon(QIcon('Modules_Graphiques/images/Olympy.png'))
         self.setWindowTitle("Olympy")
 
@@ -36,7 +36,7 @@ class MaFenetre(QTabWidget):
         ong_pib=Ong_PIB()
         ong_rech=Ong_Rech()
 
-        self.addTab(ong_carte,'Carte')
+        # self.addTab(ong_carte,'Carte')
         self.addTab(ong_age,'Ages')
         self.addTab(ong_pib,'PIB')
         self.addTab(ong_rech,'Recherche')

@@ -33,11 +33,11 @@ class Onglet_generique(QWidget):
         super().__init__()
         self.layout_generic = QVBoxLayout()
         self.layout_specific = QHBoxLayout()
-        slider = Slider()
+        self.slider = Slider()
         self.layout_generic.addStretch(10)
         self.layout_generic.addLayout(self.layout_specific)
         self.layout_generic.addStretch(10)
-        self.layout_generic.addWidget(slider)
+        self.layout_generic.addWidget(self.slider)
         self.setLayout(self.layout_generic)
 
 
@@ -61,8 +61,6 @@ class Ong_Age(Onglet_generique):
     def __init__(self):
         super().__init__()
 
-        label = QLabel("Histogramme : Coming very soon...")
-
         label2 = QLabel("Selection sports :")
         self.sport1 = ComboBox_Sports()
         self.sport1.setCurrentIndex(1)
@@ -71,6 +69,8 @@ class Ong_Age(Onglet_generique):
         self.refresh_button = QPushButton("Refresh")
         self.refresh_button.setStyleSheet("background-color: lightGray")
         self.refresh_button.clicked.connect(self._update_canvas)
+
+        self.slider.slider.sliderReleased.connect(self._update_canvas)
 
         layoutV = QVBoxLayout()
         layoutV.addStretch(10)
@@ -84,9 +84,7 @@ class Ong_Age(Onglet_generique):
         layoutV.addStretch(10)
 
 
-        label = QLabel("Histogramm : Coming soon...")
-
-        self.canvas = FigureCanvasQTAgg(Figure(figsize=(10,10)))
+        self.canvas = FigureCanvasQTAgg(Figure())
         self.ax = self.canvas.figure.subplots()
 
         self.layout_specific.addStretch()
@@ -108,6 +106,8 @@ class Ong_Age(Onglet_generique):
                 hist_data = placeholder_histogram(1000,id_sport[i])
                 self.ax.hist(hist_data,alpha = 1/N_hist, label = liste_sports[id_sport[i]])
         self.ax.legend()
+        self.ax.set_xlabel("Age")
+        self.ax.set_ylabel("Médailles")
         self.canvas.draw()
 
 
