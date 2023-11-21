@@ -135,3 +135,44 @@ class Ong_Rech(Onglet_generique):
         self.setLayout(self.layout_generic)
 
 
+class Ong_Cred(QWidget):
+    def __init__(self):
+        super().__init__()
+        pixmap = QPixmap('Modules_Graphiques/images/Olympy.png')
+        rect = QRect(0, 350, 18000, 1000)
+        pixmap = pixmap.copy(rect)
+        self.label_pic = QLabel()
+        height_label = 300
+        self.label_pic.resize(self.width(), height_label)
+
+        layoutV = QVBoxLayout()
+
+
+        self.label_pic.setPixmap(pixmap.scaled(self.label_pic.size(), Qt.KeepAspectRatio))
+
+        layoutV.addStretch()
+        layoutV.addWidget(QLabel("Ce logiciel a été réalisé avec Python dans le cadre d'un projet 3A à l'IOGS"))
+
+        layoutV.addWidget(self.label_pic)
+        layoutV.addWidget(QLabel(""))
+        layoutV.addWidget(QLabel("""Les développeurs souhaitent remercier Oriane Koellsch pour le dessin du logo
+
+
+Bibilothèques utilisées :
+    - PyQt5
+    - pandas
+    - numpy
+    - matplotlib
+    - superqt
+    - sys
+
+Merci à celles et ceux qui les développent
+
+Développement / Traitement : Gabriel Lecarme
+Développement / Interface : Colin Guirardel"""))
+
+
+        layoutV.addStretch()
+
+        self.setLayout(layoutV)
+

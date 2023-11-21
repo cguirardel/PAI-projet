@@ -14,10 +14,13 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 import numpy as np
 
 from Modules_Graphiques.guira_slider import Slider
-from Modules_Graphiques.guira_onglets import Ong_Carte, Ong_Age, Ong_PIB, Ong_Rech
+from Modules_Graphiques.guira_onglets import Ong_Carte, Ong_Age, Ong_PIB, Ong_Rech, Ong_Cred
 
 
-
+# This part changes taskbar icon for windows
+import ctypes
+myappid = 'Olympy.project' # arbitrary string
+ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 
 class MaFenetre(QTabWidget):
@@ -35,11 +38,13 @@ class MaFenetre(QTabWidget):
         ong_age=Ong_Age()
         ong_pib=Ong_PIB()
         ong_rech=Ong_Rech()
+        ong_cred=Ong_Cred()
 
         # self.addTab(ong_carte,'Carte')
         self.addTab(ong_age,'Ages')
         self.addTab(ong_pib,'PIB')
         self.addTab(ong_rech,'Recherche')
+        self.addTab(ong_cred,'Remerciements')
 
 
 
