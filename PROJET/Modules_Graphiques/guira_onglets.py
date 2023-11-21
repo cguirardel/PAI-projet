@@ -157,6 +157,8 @@ class Ong_Cred(QWidget):
         layoutV.addWidget(QLabel(""))
         layoutV.addWidget(QLabel("""Les développeurs souhaitent remercier Oriane Koellsch pour le dessin du logo
 
+Bases de données utilisées :
+    - Jex Olympiques : https://www.kaggle.com/datasets/bhanupratapbiswas/olympic-data
 
 Bibilothèques utilisées :
     - PyQt5
