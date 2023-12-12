@@ -173,7 +173,7 @@ Bibilothèques utilisées :
     - superqt
     - sys
 
-Merci à celles et ceux qui les développent
+Merci à celles et ceux qui les développent et les maintiennent !
 
 Développement / Traitement : Gabriel Lecarme
 Développement / Interface : Colin Guirardel"""))
