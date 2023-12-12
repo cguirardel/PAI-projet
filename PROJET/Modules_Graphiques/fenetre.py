@@ -30,7 +30,7 @@ class MaFenetre(QTabWidget):
         width = 500
         #self.resize(width,height)
         self.setWindowIcon(QIcon('Modules_Graphiques/images/Olympy.png'))
-        self.setWindowTitle("Olympy")
+        self.setWindowTitle("Olym.py")
 
         layoutV0 = QVBoxLayout()
 
