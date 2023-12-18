@@ -8,7 +8,7 @@ from matplotlib.figure import Figure
 
 
 from Modules_Graphiques.guira_slider import Slider
-from DATA.guira_extract import liste_sports
+from Modules_Traitement.guira_extract import liste_sports
 
 
 ## placeholders
