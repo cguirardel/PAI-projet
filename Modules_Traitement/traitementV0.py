@@ -20,7 +20,7 @@ noc = pandas.read_csv("./data/noc_region.csv")
 lignes = olympics.index
 columns = olympics.columns
 
-def compteMedailles(df, start_year, end_year, medal_type = 'All', edition = ALL_SEASON):
+def compteMedaillesPays(df, start_year, end_year, medal_type = 'All', edition = ALL_SEASON):
     """_summary_
 
     Args:
@@ -43,14 +43,14 @@ def compteMedailles(df, start_year, end_year, medal_type = 'All', edition = ALL_
     if not(medal_type in ["Gold", "Silver", "Bronze", "All"]):
         raise ValueError('medal_type must be in ["Gold", "Silver", "Bronze", "All"]')
     if medal_type == 'All':
-        gold = compteMedailles(df, start_year, end_year, 'Gold', edition)
-        silver = compteMedailles(df, start_year, end_year, medal_type = 'Silver', edition = edition)
-        bronze = compteMedailles(df, start_year, end_year, medal_type = 'Bronze', edition = edition)
+        gold = compteMedaillesPays(df, start_year, end_year, 'Gold', edition)
+        silver = compteMedaillesPays(df, start_year, end_year, medal_type = 'Silver', edition = edition)
+        bronze = compteMedaillesPays(df, start_year, end_year, medal_type = 'Bronze', edition = edition)
         compte = gold + silver + bronze
     else:
         formatdf = df.astype({'NOC' : 'category'}) # Permet de conserver les 'NOC' avec 0 médaille d'or
         formatdf = formatdf[(df.Year >= start_year) & (df.Year <= end_year)]  # Filtrage par période
-        if edition != 0:
+        if edition != ALL_SEASON:
             season = ["Summer", "Winter"][edition - 1]
             formatdf = formatdf[df.Season == season]
         compte = formatdf.loc[df.Medal == medal_type, ["NOC", "Medal"]]   # Filtrage par médaille
@@ -64,10 +64,28 @@ def compteMedailles(df, start_year, end_year, medal_type = 'All', edition = ALL_
     formatdf = formatdf[(csv.Year >= start_year) & (csv.Year <= end_year)]
     silver = formatdf.loc[csv.Medal == 'Silver', ['NOC', 'Medal']].groupby('NOC').count().sort_values('Medal', ascending = False)
     return silver"""
+    
+def compteMedaillesAge(df, start_year, end_year, medal_type = 'All', edition = ALL_SEASON):
+    if not(medal_type in ["Gold", "Silver", "Bronze", "All"]):
+        raise ValueError('medal_type must be in ["Gold", "Silver", "Bronze", "All"]')
+    if medal_type == 'All':
+        gold = compteMedaillesAge(df, start_year, end_year, 'Gold', edition)
+        silver = compteMedaillesAge(df, start_year, end_year, medal_type = 'Silver', edition = edition)
+        bronze = compteMedaillesAge(df, start_year, end_year, medal_type = 'Bronze', edition = edition)
+        compte = gold + silver + bronze
+    else:
+        formatdf = df[(df.Year >= start_year) & (df.Year <= end_year)]
+        if edition != ALL_SEASON:
+            season = ["Summer", "Winter"][edition - 1]
+            formatdf = formatdf[df.Season == season]
+        compte = formatdf.loc[df.Medal == medal_type, ["Age", "Medal"]]
+        dfgroupby = compte.groupby('Age')
+        compte = dfgroupby.count()
+    return compte
 
 def main():
-    res = compteMedailles(olympics, 2010, 2010, medal_type='Bronze', edition=2)    
-    print(res.loc['GER'])
+    res = compteMedaillesAge(olympics, 1896, 2010, edition = SUMMER)
+    print(res)
     
 if __name__ == "__main__":
     main()
