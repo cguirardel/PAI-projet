@@ -24,7 +24,7 @@ def compteMedailles(df, start_year, end_year, medal_type = 'All', edition = ALL_
     """_summary_
 
     Args:
-        csv (_type_): _description_
+        df (_type_): _description_
         start_year (_type_): _description_
         end_year (_type_): _description_
         medal_type (str, optional): _description_. Defaults to 'All'.
@@ -38,12 +38,10 @@ def compteMedailles(df, start_year, end_year, medal_type = 'All', edition = ALL_
         _type_: _description_
     """
 
-    df = df[~df.Medal.isnan()]
+    # df = df[~df.Medal.isnan()]
 
     if not(medal_type in ["Gold", "Silver", "Bronze", "All"]):
         raise ValueError('medal_type must be in ["Gold", "Silver", "Bronze", "All"]')
-    if not(edition in [0, 1, 2]):
-        raise ValueError('edition must be an int = 0; 1 or 2')
     if medal_type == 'All':
         gold = compteMedailles(df, start_year, end_year, 'Gold', edition)
         silver = compteMedailles(df, start_year, end_year, medal_type = 'Silver', edition = edition)
