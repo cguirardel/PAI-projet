@@ -10,7 +10,7 @@ from matplotlib.figure import Figure
 from Modules_Graphiques.guira_slider import Slider
 
 from Modules_Traitement.guira_extract import liste_sports
-from Modules_Traitement.traitementV0_extract import compteMedailles, olympics
+from Modules_Traitement.traitementV0 import compteMedailles, olympics
 
 
 ## placeholders

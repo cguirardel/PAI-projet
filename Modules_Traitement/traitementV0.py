@@ -1,17 +1,17 @@
 """
-    objectif: Première version du traitement du programme/IHM visant à exploiter; traiter 
-et afficher des résultats sur le dataset suivant: 
+    objectif: Première version du traitement du programme/IHM visant à exploiter; traiter
+et afficher des résultats sur le dataset suivant:
 https://www.kaggle.com/datasets/bhanupratapbiswas/olympic-data/
-    
+
     date: 18/11/2023 dernière mise à jour: 18/11/2023
     auteur: Gabriel Lecarme
 """
-    
+
 import numpy as np
 import pandas
 
-olympics = pandas.read_csv("./data/dataset_olympics.csv")
-noc = pandas.read_csv("./data/noc_region.csv")
+olympics = pandas.read_csv("Modules_traitement/data/dataset_olympics.csv")
+noc = pandas.read_csv("Modules_traitement/data/noc_region.csv")
 
 lignes = olympics.index
 columns = olympics.columns
@@ -61,8 +61,8 @@ def compteMedailles(csv, start_year, end_year, medal_type = 'All', edition = 0):
     return silver"""
 
 def main():
-    res = compteMedailles(olympics, 2010, 2010, medal_type='Bronze', edition=2)    
+    res = compteMedailles(olympics, 2010, 2010, medal_type='Bronze', edition=2)
     print(res.loc['GER'])
-    
+
 if __name__ == "__main__":
     main()
