@@ -18,7 +18,7 @@ from Modules_Traitement.traitementV0 import compteMedailles, olympics
 from numpy.random import randint
 
 def placeholder_histogram(N,sport_ID,start_year,end_year,saison):
-    print(start_year,end_year,saison)
+    #print(start_year,end_year,saison)
     h = randint(16,30,N)
     return h
 
@@ -69,11 +69,15 @@ class Ong_Age(Onglet_generique):
         self.sport1.setCurrentIndex(1)
         self.sport2 = ComboBox_Sports()
         self.sport3 = ComboBox_Sports()
-        self.refresh_button = QPushButton("Refresh")
-        self.refresh_button.setStyleSheet("background-color: lightGray")
-        self.refresh_button.clicked.connect(self._update_canvas)
 
         self.slider.slider.sliderReleased.connect(self._update_canvas)
+        self.slider.box_saison.currentIndexChanged.connect(self._update_canvas)
+
+        self.sport1.currentIndexChanged.connect(self._update_canvas)
+        self.sport2.currentIndexChanged.connect(self._update_canvas)
+        self.sport3.currentIndexChanged.connect(self._update_canvas)
+
+
 
         layoutV = QVBoxLayout()
         layoutV.addStretch(10)
@@ -82,8 +86,6 @@ class Ong_Age(Onglet_generique):
         layoutV.addWidget(self.sport1)
         layoutV.addWidget(self.sport2)
         layoutV.addWidget(self.sport3)
-        layoutV.addStretch(2)
-        layoutV.addWidget(self.refresh_button)
         layoutV.addStretch(10)
 
 
@@ -104,14 +106,14 @@ class Ong_Age(Onglet_generique):
 
         self.ax.clear()
         id_sport = [[self.sport1,self.sport2,self.sport3][i].currentIndex()for i in range(3)]
-        N_hist = 3-id_sport.count(0)
+        hist_data = []
 
         for i in range(3):
             if id_sport[i] != 0:
                 start_year,end_year = self.slider.slider.sliderPosition()
                 saison = self.slider.box_saison.currentIndex() #0->tous, 1-> été, 2 -> Hiver
-                hist_data = placeholder_histogram(1000,id_sport[i],start_year,end_year,saison)
-                self.ax.hist(hist_data,alpha = 1/N_hist, label = liste_sports[id_sport[i]])
+                hist_data.append(placeholder_histogram(1000,id_sport[i],start_year,end_year,saison))
+        self.ax.hist(hist_data, label = liste_sports[id_sport[i]])
         self.ax.legend()
         self.ax.set_xlabel("Age")
         self.ax.set_ylabel("Médailles")

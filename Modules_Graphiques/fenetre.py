@@ -42,8 +42,8 @@ class MaFenetre(QTabWidget):
 
         # self.addTab(ong_carte,'Carte')
         self.addTab(ong_age,'Ages')
-        self.addTab(ong_pib,'PIB')
-        self.addTab(ong_rech,'Recherche')
+        #self.addTab(ong_pib,'PIB')
+        #self.addTab(ong_rech,'Recherche')
         self.addTab(ong_cred,'Remerciements')
 
 
