@@ -60,6 +60,29 @@ def compteMedailles(csv, start_year, end_year, medal_type = 'All', edition = 0):
     silver = formatdf.loc[csv.Medal == 'Silver', ['NOC', 'Medal']].groupby('NOC').count().sort_values('Medal', ascending = False)
     return silver"""
 
+
+
+def compteMedailles_athlete(csv, start_year, end_year, athlete, medal_type = 'All', edition = 0):
+    """_summary_
+
+    Args:
+        csv (_type_): _description_
+        start_year (_type_): _description_
+        end_year (_type_): _description_
+        medal_type (str, optional): _description_. Defaults to 'All'.
+        edition (int, optional): _description_. Defaults to 0.
+
+    Raises:
+        ValueError: _description_
+        ValueError: _description_
+
+    Returns:
+        _type_: _description_
+    """
+    csv = csv[csv.Name == athlete]
+    return csv
+
+
 def main():
     res = compteMedailles(olympics, 2010, 2010, medal_type='Bronze', edition=2)
     print(res.loc['GER'])
