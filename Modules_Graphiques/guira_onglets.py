@@ -10,7 +10,7 @@ from matplotlib.figure import Figure
 from Modules_Graphiques.guira_slider import Slider
 
 from Modules_Traitement.guira_extract import liste_sports
-from Modules_Traitement.traitementV0 import compteMedaillesAge, olympics
+from Modules_Traitement.traitementV11012024 import compteMedailles, olympics
 
 
 import geopandas as gpd
@@ -147,8 +147,11 @@ class Ong_Age(Onglet_generique):
 
         for i in range(3):
             if id_sport[i] != 0:
-
-                ages = compteMedaillesAge(olympics, start_year, end_year, edition = saison, sport = liste_sports[id_sport[i]])
+                if id_sport[i] == 1: df =  olympics
+                else : df = olympics[olympics.Sport==liste_sports[id_sport[i]]]
+                #print(liste_sports[id_sport[i]])
+                #print(df)
+                ages = compteMedailles(df, 'Age', start_year, end_year, edition = saison)
                 #print(ages)
                 hist_val.append(list(ages.Medal))
                 hist_age.append(list(ages.index))

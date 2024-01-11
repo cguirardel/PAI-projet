@@ -22,8 +22,8 @@ class Slider(QWidget):
         self.slider.setTickInterval(4)
         self.slider.setSingleStep(1)
         self.slider.setMaximum(2016)
-        self.slider.setMinimum(1996)
-        self.slider.setValue((1996, 2016))
+        self.slider.setMinimum(1896)
+        self.slider.setValue((1896, 2016))
         self.slider.valueChanged.connect(self.update_label)
         
         self.label = QLabel()
