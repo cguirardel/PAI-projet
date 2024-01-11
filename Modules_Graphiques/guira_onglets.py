@@ -13,6 +13,8 @@ from Modules_Traitement.guira_extract import liste_sports
 from Modules_Traitement.traitementV0 import compteMedaillesAge, olympics
 
 
+import geopandas as gpd
+
 ## placeholders
 
 from numpy.random import randint
@@ -21,6 +23,10 @@ def placeholder_histogram(N,sport_ID,start_year,end_year,saison):
     #print(start_year,end_year,saison)
     h = randint(16,30,N)
     return h
+
+
+def placeholder_table() :
+    pass
 
 ## Widgets
 
@@ -51,12 +57,39 @@ class Ong_Carte(Onglet_generique):
     def __init__(self):
         super().__init__()
 
-        self.label = QLabel("Onglet Carte : Coming soon...")
-        self.layout_specific.addStretch()
-        self.layout_specific.addWidget(self.label)
-        self.layout_specific.addStretch()
+        self.label1 = QLabel("Carte : Coming soon...")
+        self.label2 = QLabel("Tableau : Coming soon...")
+
+
+        self.canvas = FigureCanvasQTAgg(Figure())
+        self.ax = self.canvas.figure.subplots()
+
+        self.tableau_medailles = QTableWidget()
+        self.tableau_medailles.setRowCount(230)
+        self.tableau_medailles.setColumnCount(4)
+        horHeaders = ['NOC', 'Or','Argent','Bronze']
+        self.tableau_medailles.setHorizontalHeaderLabels(horHeaders)
+        self.tableau_medailles.resizeColumnsToContents()
+
+        #self.layout_specific.addStretch()
+        self.layout_specific.addWidget(self.canvas)
+        #self.layout_specific.addStretch()
+        self.layout_specific.addWidget(self.tableau_medailles)
+        #self.layout_specific.addStretch()
         self.setLayout(self.layout_generic)
 
+        self._update()
+
+    def _update(self):
+        self._update_table()
+        self._update_map()
+    def _update_table(self):
+        pass
+    def _update_map(self):
+        self.ax.clear()
+        countries = gpd.read_file('./Modules_Traitement/data/map')
+        countries.plot(color="lightgrey",ax=self.ax)
+        self.canvas.draw()
 
 
 
@@ -119,7 +152,7 @@ class Ong_Age(Onglet_generique):
                 #print(ages)
                 hist_val.append(list(ages.Medal))
                 hist_age.append(list(ages.index))
-        print(hist_val)
+        #print(hist_val)
         self.ax.hist(hist_age, weights = hist_val, label = [liste_sports[id_sport[i]] for i in range(3)])
         self.ax.legend()
         self.ax.set_xlabel("Age")
@@ -174,11 +207,13 @@ class Ong_Cred(QWidget):
         layoutV.addWidget(QLabel("""Les développeurs souhaitent remercier Oriane Koellsch pour le dessin du logo
 
 Bases de données utilisées :
-    - Jex Olympiques : https://www.kaggle.com/datasets/bhanupratapbiswas/olympic-data
+    - Jeux Olympiques : https://www.kaggle.com/datasets/bhanupratapbiswas/olympic-data
+    - Carte du monde : http//www.naturalearthdata.com/download/110m/cultural/ne_110m_admin_0_countries.zip
 
 Bibilothèques utilisées :
     - PyQt5
     - pandas
+    - geopandas
     - numpy
     - matplotlib
     - superqt
