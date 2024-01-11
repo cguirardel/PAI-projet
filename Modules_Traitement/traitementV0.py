@@ -10,17 +10,24 @@ https://www.kaggle.com/datasets/bhanupratapbiswas/olympic-data/
 import numpy as np
 import pandas
 
-<<<<<<< HEAD
+def checknan(x):
+    if np.isnan(x):
+        return 0
+    else :
+        return x
+
+
+
+
 olympics = pandas.read_csv("Modules_traitement/data/dataset_olympics.csv")
 noc = pandas.read_csv("Modules_traitement/data/noc_region.csv")
-=======
+
 SUMMER = 1
 WINTER = 2
 ALL_SEASON = 0
 
 olympics = pandas.read_csv("./data/dataset_olympics.csv")
 noc = pandas.read_csv("./data/noc_region.csv")
->>>>>>> 74132706a3977c56f62a849d9b7672ef45235949
 
 lignes = olympics.index
 columns = olympics.columns
@@ -51,7 +58,9 @@ def compteMedaillesPays(df, start_year, end_year, medal_type = 'All', edition = 
         gold = compteMedaillesPays(df, start_year, end_year, 'Gold', edition)
         silver = compteMedaillesPays(df, start_year, end_year, medal_type = 'Silver', edition = edition)
         bronze = compteMedaillesPays(df, start_year, end_year, medal_type = 'Bronze', edition = edition)
-        compte = gold + silver + bronze
+
+
+        compte = checknan(gold) + checknan(silver) + checknan(bronze)
     else:
         formatdf = df.astype({'NOC' : 'category'}) # Permet de conserver les 'NOC' avec 0 médaille d'or
         formatdf = formatdf[(df.Year >= start_year) & (df.Year <= end_year)]  # Filtrage par période
@@ -69,8 +78,10 @@ def compteMedaillesPays(df, start_year, end_year, medal_type = 'All', edition = 
     formatdf = formatdf[(csv.Year >= start_year) & (csv.Year <= end_year)]
     silver = formatdf.loc[csv.Medal == 'Silver', ['NOC', 'Medal']].groupby('NOC').count().sort_values('Medal', ascending = False)
     return silver"""
-    
-def compteMedaillesAge(df, start_year, end_year, medal_type = 'All', edition = ALL_SEASON):
+
+def compteMedaillesAge(df, start_year, end_year, medal_type = 'All', edition = ALL_SEASON, sport = 'Tous sports confondus'):
+    if not sport == 'Tous sports confondus':
+        df = df[df.Sport==sport]
     if not(medal_type in ["Gold", "Silver", "Bronze", "All"]):
         raise ValueError('medal_type must be in ["Gold", "Silver", "Bronze", "All"]')
     if medal_type == 'All':
@@ -79,6 +90,7 @@ def compteMedaillesAge(df, start_year, end_year, medal_type = 'All', edition = A
         bronze = compteMedaillesAge(df, start_year, end_year, medal_type = 'Bronze', edition = edition)
         compte = gold + silver + bronze
     else:
+        df = df.astype({'Age' : 'category'})
         formatdf = df[(df.Year >= start_year) & (df.Year <= end_year)]
         if edition != ALL_SEASON:
             season = ["Summer", "Winter"][edition - 1]
@@ -112,14 +124,7 @@ def compteMedailles_athlete(csv, start_year, end_year, athlete, medal_type = 'Al
 
 
 def main():
-<<<<<<< HEAD
-    res = compteMedailles(olympics, 2010, 2010, medal_type='Bronze', edition=2)
-    print(res.loc['GER'])
-
-=======
     res = compteMedaillesAge(olympics, 1896, 2010, edition = SUMMER)
     print(res)
-    
->>>>>>> 74132706a3977c56f62a849d9b7672ef45235949
 if __name__ == "__main__":
     main()
