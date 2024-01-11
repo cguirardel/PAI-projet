@@ -106,14 +106,21 @@ class Ong_Age(Onglet_generique):
 
         self.ax.clear()
         id_sport = [[self.sport1,self.sport2,self.sport3][i].currentIndex()for i in range(3)]
-        hist_data = []
+        start_year,end_year = self.slider.slider.sliderPosition()
+        saison = self.slider.box_saison.currentIndex() #0->tous, 1-> été, 2 -> Hiver
+
+        hist_val = []
+        hist_age = []
 
         for i in range(3):
             if id_sport[i] != 0:
-                start_year,end_year = self.slider.slider.sliderPosition()
-                saison = self.slider.box_saison.currentIndex() #0->tous, 1-> été, 2 -> Hiver
-                hist_data.append(placeholder_histogram(1000,id_sport[i],start_year,end_year,saison))
-        self.ax.hist(hist_data, label = liste_sports[id_sport[i]])
+
+                ages = compteMedaillesAge(olympics, start_year, end_year, edition = saison, sport = liste_sports[id_sport[i]])
+                #print(ages)
+                hist_val.append(list(ages.Medal))
+                hist_age.append(list(ages.index))
+        print(hist_val)
+        self.ax.hist(hist_age, weights = hist_val, label = [liste_sports[id_sport[i]] for i in range(3)])
         self.ax.legend()
         self.ax.set_xlabel("Age")
         self.ax.set_ylabel("Médailles")
