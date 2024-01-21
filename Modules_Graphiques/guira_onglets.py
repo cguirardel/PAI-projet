@@ -12,8 +12,14 @@ from Modules_Graphiques.guira_slider import Slider
 from Modules_Traitement.guira_extract import liste_sports
 from Modules_Traitement.traitementV11012024 import compteMedailles, olympics
 
-
 import geopandas as gpd
+import pandas as pd
+
+countries = gpd.read_file('./data/map').loc[:, ['geometry', 'ISO_A3_EH']]
+medals = pd.DataFrame(columns = ['MEDALS'])
+countries = countries.join(medals)
+
+
 
 ## placeholders
 
@@ -28,6 +34,9 @@ def placeholder_histogram(N,sport_ID,start_year,end_year,saison):
 def placeholder_table() :
     pass
 
+
+def placeholder_map():
+    countries.MEDALS = randint(0,100,countries.shape[0])
 ## Widgets
 
 class ComboBox_Sports(QComboBox):
@@ -87,8 +96,8 @@ class Ong_Carte(Onglet_generique):
         pass
     def _update_map(self):
         self.ax.clear()
-        countries = gpd.read_file('./Modules_Traitement/data/map')
-        countries.plot(color="lightgrey",ax=self.ax)
+        placeholder_map()
+        countries.plot(ax=self.ax, column = 'MEDALS', legend=True)
         self.canvas.draw()
 
 
