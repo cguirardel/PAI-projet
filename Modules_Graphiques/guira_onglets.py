@@ -1,3 +1,9 @@
+if __name__ == "__main__":
+    from Olym import main
+    main()
+
+## Imports
+
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
@@ -45,6 +51,7 @@ class ComboBox_Sports(QComboBox):
         self.addItems(liste_sports)
 
 
+
 ## Onglets
 class Onglet_generique(QWidget):
     def __init__(self):
@@ -71,7 +78,8 @@ class Ong_Carte(Onglet_generique):
 
 
         self.canvas = FigureCanvasQTAgg(Figure())
-        self.ax = self.canvas.figure.subplots()
+        self.ax, self.cax = self.canvas.figure.subplots(1,2,gridspec_kw={'width_ratios':[20,1]})
+        #self.cax = self.canvas.figure.subplots(1,2,2)
 
         self.tableau_medailles = QTableWidget()
         self.tableau_medailles.setRowCount(230)
@@ -87,6 +95,9 @@ class Ong_Carte(Onglet_generique):
         #self.layout_specific.addStretch()
         self.setLayout(self.layout_generic)
 
+        self.slider.slider.sliderReleased.connect(self._update)
+        self.slider.box_saison.currentIndexChanged.connect(self._update)
+
         self._update()
 
     def _update(self):
@@ -97,7 +108,7 @@ class Ong_Carte(Onglet_generique):
     def _update_map(self):
         self.ax.clear()
         placeholder_map()
-        countries.plot(ax=self.ax, column = 'MEDALS', legend=True)
+        countries.plot(ax=self.ax, column = 'MEDALS', legend=True, cax=self.cax)
         self.canvas.draw()
 
 
@@ -240,4 +251,3 @@ Développement / Interface : Colin Guirardel"""))
         layoutV.addStretch()
 
         self.setLayout(layoutV)
-
