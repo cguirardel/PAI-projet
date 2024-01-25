@@ -62,11 +62,22 @@ def compteMedailles(df, category, start_year, end_year, medal_type = 'All', edit
     return res
 
 def constructionCarte(df, start_year, end_year, edition = ALL_SEASON):
-    res = compteMedailles(df, 'NOC', start_year, end_year, medal_type='All', edition = edition, sort = True)
-    res = res.merge(correspondances, left_index=True, right_on='NOC', how='outer')
-    res = res.groupby('ADM0_A3', dropna=False)
-    res = res.sum(numeric_only=True)
-    res = pandas.merge(countries, res, left_on='ADM0_A3', right_index=True, how='left')
+    """Ajoute au GeoDataFrame une colonne avec un compte des médailles sur la période donnée
+
+    Args:
+        df (_type_): _description_
+        start_year (_type_): _description_
+        end_year (_type_): _description_
+        edition (_type_, optional): _description_. Defaults to ALL_SEASON.
+
+    Returns:
+        _type_: _description_
+    """
+    compte = compteMedailles(df, 'NOC', start_year, end_year, medal_type='All', edition = edition, sort = True)
+    corres = compte.merge(correspondances, left_index=True, right_on='NOC', how='outer')
+    dfgroupby = corres.groupby('ADM0_A3', dropna=False) # groupement par code ADM0 en gardant les pays qui ne font pas de médailles
+    res = dfgroupby.sum(numeric_only=True) # somme des médailles et suppression de la colonne NOC
+    res = pandas.merge(countries, res, left_on='ADM0_A3', right_index=True, how='left') # Ajout de la colonne au GeoDataFrame
     return res
     
 def main():
