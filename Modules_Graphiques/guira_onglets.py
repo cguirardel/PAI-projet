@@ -227,7 +227,7 @@ class Ong_PIB(Onglet_generique):
     def __init__(self):
         super().__init__()
 
-        self.label = QLabel("Onglet PIB : Coming very soon...")
+        self.label = QLabel("Onglet PIB : Coming very soon... or not at all")
         self.layout_specific.addStretch()
         self.layout_specific.addWidget(self.label)
         self.layout_specific.addStretch()
@@ -239,12 +239,46 @@ class Ong_Rech(Onglet_generique):
     def __init__(self):
         super().__init__()
 
-        self.label = QLabel("Onglet Recherche : Coming less soon...")
+
+        self.label = QLabel("Onglet Recherche : Coming soon...")
+        label_name = QLabel("Nom :")
+        label_NOC = QLabel("NOC du pays :")
+        label_sport = QLabel("Sport :")
+
+        button_search = QPushButton("Rechercher")
+        button_search.clicked.connect(self.search)
+
+        self.textbox_name = QLineEdit()
+        self.textbox_NOC = QLineEdit()
+        self.textbox_sport = QLineEdit()
+
+
+        layoutV = QVBoxLayout()
+        #layoutV.addStretch()
+        layoutV.addWidget(label_name)
+        layoutV.addWidget(self.textbox_name)
+
+        layoutV.addStretch()
+        layoutV.addWidget(label_NOC)
+        layoutV.addWidget(self.textbox_NOC)
+
+        layoutV.addStretch()
+        layoutV.addWidget(label_sport)
+        layoutV.addWidget(self.textbox_sport)
+        layoutV.addStretch()
+
+        layoutV.addWidget(button_search)
+        #layoutV.addStretch()
+
+        self.layout_specific.addStretch()
+        self.layout_specific.addLayout(layoutV)
         self.layout_specific.addStretch()
         self.layout_specific.addWidget(self.label)
         self.layout_specific.addStretch()
         self.setLayout(self.layout_generic)
 
+    def search(self):
+        pass
 
 class Ong_Cred(QWidget):
     def __init__(self):
@@ -280,6 +314,7 @@ Bibilothèques utilisées :
     - matplotlib
     - superqt
     - sys
+    - re
 
 Merci à celles et ceux qui les développent et les maintiennent !
 
