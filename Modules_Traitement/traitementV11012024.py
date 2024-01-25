@@ -48,9 +48,8 @@ def compteMedailles(df, category, start_year, end_year, medal_type = 'All', edit
     if edition != ALL_SEASON:
         season = ["Summer", "Winter"][edition - 1]
         formatdf = formatdf[df.Season == season] # Edition
-    if medal_type != 'ALL':
+    if medal_type != 'All':
         formatdf = formatdf.loc[df.Medal == medal_type] # Type de médaille
-
     compte = formatdf.loc[: ,[category, "Medal"]]
     dfgroupby = compte.groupby(category)    # Regroupement <pandas.core.groupby.generic.DataFrameGroupBy object at 0x000001A7E13A4D50>
     res = dfgroupby.count()   # Comptage
