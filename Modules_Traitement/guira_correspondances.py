@@ -1,9 +1,8 @@
 import geopandas as gpd
 import pandas as pd
+import numpy as np
 
-from numpy import NaN, sort
-
-
+NaN = np.NaN
 
 countries = gpd.read_file('./data/map').loc[:,['geometry','ADM0_A3','NAME']]
 
@@ -16,7 +15,7 @@ noc_region.loc[208,'reg'] = 'Tuvalu'
 noc_region.loc[213,'reg'] = 'Unknown'
 
 # Initialisation
-correspondances = pd.DataFrame(columns = ['noc','ADM0_A3'])
+correspondances = pd.DataFrame(columns = ['NOC','ADM0_A3'])
 
 ## correspondance directe : NOC == ADM0_A3
 
@@ -52,50 +51,61 @@ if False:
 
 # print(sort(countries.NAME.unique()))
 
-equivalent_names = {'Individual Olympic Athletes' : NaN
-                    'Refugee Olympic Team' : NaN
-                    'Unknown' : NaN
-                    'Czech Republic' : 'Czechia'
-                    'Republic of Congo' : 'Dem. Rep. Congo'
-                    'South Sudan' : 'S. Sudan'
-                    'Curacao' : 'Netherlandas'
-                    'Andorra' : NaN # pas de medailles anyways
-                    'Antigua' : NaN
-                    'Aruba' : NaN
-                    'American Samoa' : 'United States of America'
-                    'Barbados' : NaN
-                    'Bermuda' : NaN
-                    'Cayman Islands' : NaN
-                    'Cook Island' : NaN
-                    'Comoros' : NaN
-                    'Cape Verde' : NaN
-                    'Dominica' : NaN
-                    'Micronesia' : NaN
-                    'Equatorial Guinea' : NaN
-                    'Grenada' : NaN
-                    'Guam' : NaN
-                    'Virgin Islands, US' : 'United States of America'
-                    'Virgin Islands, British' : 'United Kingdom'
-                    'Kiribati' : NaN
-                    'Saint Lucia' : NaN
-                    'Liechtenstein' : NaN
-                    'Maldives' : NaN
-                    'Marshall Islands' : NaN
-                    'Malta' : NaN
-                    'Monaco' : NaN
-                    'Mauritius' : NaN
-                    'Nauru' : NaN
-                    'Palau' : NaN
-                    'Samoa' : NaN
-                    'Seychelles' : NaN
-                    'Singapore' : NaN
-                    'Saint Kitts' : NaN
-                    'San Marino' : 'Italy' # pas de médailles anyways
-                    'Sao Tome and Principe' : NaN
-                    'Tonga' : NaN
-                    'Tuvalu' : NaN
-                    'Saint Vincent' : NaN
-                    'Trinidad' : NaN
-                    }
+equivalent_names = {'Individual Olympic Athletes' : NaN,
+                    'Refugee Olympic Team' : NaN,
+                    'Unknown' : NaN,
+                    'Czech Republic' : 'Czechia',
+                    'Republic of Congo' : 'Dem. Rep. Congo',
+                    'South Sudan' : 'S. Sudan',
+                    'Curacao' : 'Netherlands',
+                    'Andorra' : NaN, # pas de medailles anyways
+                    'Antigua' : NaN,
+                    'Aruba' : NaN,
+                    'American Samoa' : 'United States of America',
+                    'Barbados' : NaN,
+                    'Bermuda' : NaN,
+                    'Cayman Islands' : NaN,
+                    'Cook Islands' : NaN,
+                    'Comoros' : NaN,
+                    'Cape Verde' : NaN,
+                    'Dominica' : NaN,
+                    'Micronesia' : NaN,
+                    'Equatorial Guinea' : NaN,
+                    'Grenada' : NaN,
+                    'Guam' : NaN,
+                    'Virgin Islands, US' : 'United States of America',
+                    'Virgin Islands, British' : 'United Kingdom',
+                    'Kiribati' : NaN,
+                    'Saint Lucia' : NaN,
+                    'Liechtenstein' : NaN,
+                    'Maldives' : NaN,
+                    'Marshall Islands' : NaN,
+                    'Malta' : NaN,
+                    'Monaco' : NaN,
+                    'Mauritius' : NaN,
+                    'Nauru' : NaN,
+                    'Palau' : NaN,
+                    'Samoa' : NaN,
+                    'Seychelles' : NaN,
+                    'Singapore' : NaN,
+                    'Saint Kitts' : NaN,
+                    'San Marino' : 'Italy', # pas de médailles anyways
+                    'Sao Tome and Principe' : NaN,
+                    'Tonga' : NaN,
+                    'Tuvalu' : NaN,
+                    'Saint Vincent' : NaN,
+                    'Trinidad' : NaN}
 
+for noc in missing2:
+    name = noc_region.reg[noc_region.noc_region==noc].values[0]
+    name = equivalent_names[name]
+    if type(name) == str:
+        ADM0 = countries[countries.NAME == name].ADM0_A3.values[0]
+        correspondances.loc[len(correspondances.index)] = [noc,ADM0]
+        
+correspondances.to_csv('./data/correspondances.csv')
 
+# df = pd.DataFrame({'NAME': equivalent_names.keys(), 'Equivalent': equivalent_names.values()})
+
+# corres = pd.merge(countries, noc_region, how='left', left_on='ADM0_A3', right_on='noc_region')
+# corres.loc[corres['reg'] == 'Fiji', :]
