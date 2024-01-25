@@ -106,23 +106,10 @@ class Ong_Carte(Onglet_generique):
         self.ax, self.cax = self.canvas.figure.subplots(1,2,gridspec_kw={'width_ratios':[20,1]})
         #self.cax = self.canvas.figure.subplots(1,2,2)
 
-        start_year,end_year = self.slider.slider.sliderPosition()
-        saison = self.slider.box_saison.currentIndex() #0->tous, 1-> été, 2 -> Hiver
-
-        data_gold = compteMedailles(olympics, 'NOC', start_year, end_year, edition = saison, medal_type='Gold')
-        data_silver = compteMedailles(olympics, 'NOC', start_year, end_year, edition = saison, medal_type='Silver')
-        data_bronze = compteMedailles(olympics, 'NOC', start_year, end_year, edition = saison, medal_type='Bronze')
-
-        data = data_gold.merge(right = data_silver, on = 'NOC')
-        print(data_silver)
-        print(data)
-
-        # Getting the Model
-        self.model = pandasTableModel(data)
 
         # Creating a QTableView
         self.tableau_medailles =  QTableView()
-        self.tableau_medailles.setModel(self.model)
+
 
         #self.layout_specific.addStretch()
         self.layout_specific.addWidget(self.canvas)
@@ -140,7 +127,23 @@ class Ong_Carte(Onglet_generique):
         self._update_table()
         self._update_map()
     def _update_table(self):
-        pass
+
+        start_year,end_year = self.slider.slider.sliderPosition()
+        saison = self.slider.box_saison.currentIndex() #0->tous, 1-> été, 2 -> Hiver
+
+        data_gold = compteMedailles(olympics, 'NOC', start_year, end_year, edition = saison, medal_type='Gold')
+        data_silver = compteMedailles(olympics, 'NOC', start_year, end_year, edition = saison, medal_type='Silver')
+        data_bronze = compteMedailles(olympics, 'NOC', start_year, end_year, edition = saison, medal_type='Bronze')
+
+        data = data_gold.merge(right = data_silver, on = 'NOC', how = 'outer')
+        data = data.merge(right = data_bronze, on = 'NOC', how = 'outer')
+        data = data.rename(columns={"Medal_x":"Or" , "Medal_y":"Argent", "Medal":"Bronze"})
+        data.sort_values(by = ["Or","Argent","Bronze"],ascending=False, inplace=True)
+        data[data.isna()] = 0
+        data = data.astype('int32')
+        # Getting the Model
+        self.model = pandasTableModel(data)
+        self.tableau_medailles.setModel(self.model)
     def _update_map(self):
         self.ax.clear()
         placeholder_map()
