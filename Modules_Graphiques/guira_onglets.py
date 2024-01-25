@@ -52,6 +52,31 @@ class ComboBox_Sports(QComboBox):
 
 
 
+
+class pandasTableModel(QAbstractTableModel):
+    def __init__(self, data):
+        QAbstractTableModel.__init__(self)
+        self._data = data
+    def rowCount(self, parent=None):
+        return self._data.shape[0]
+    def columnCount(self, parnet=None):
+        return self._data.shape[1]+1
+    def data(self, index, role=Qt.DisplayRole):
+        if index.isValid():
+            if role == Qt.DisplayRole:
+                if index.column() == 0 :
+                    return str(self._data.index[index.row()])
+                else : return str(self._data.iloc[index.row(), index.column()-1])
+        return None
+    def headerData(self, col, orientation, role):
+        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
+            if col == 0 : return 'NOC'
+            return self._data.columns[col-1]
+        return None
+
+
+
+
 ## Onglets
 class Onglet_generique(QWidget):
     def __init__(self):
@@ -81,12 +106,23 @@ class Ong_Carte(Onglet_generique):
         self.ax, self.cax = self.canvas.figure.subplots(1,2,gridspec_kw={'width_ratios':[20,1]})
         #self.cax = self.canvas.figure.subplots(1,2,2)
 
-        self.tableau_medailles = QTableWidget()
-        self.tableau_medailles.setRowCount(230)
-        self.tableau_medailles.setColumnCount(4)
-        horHeaders = ['NOC', 'Or','Argent','Bronze']
-        self.tableau_medailles.setHorizontalHeaderLabels(horHeaders)
-        self.tableau_medailles.resizeColumnsToContents()
+        start_year,end_year = self.slider.slider.sliderPosition()
+        saison = self.slider.box_saison.currentIndex() #0->tous, 1-> été, 2 -> Hiver
+
+        data_gold = compteMedailles(olympics, 'NOC', start_year, end_year, edition = saison, medal_type='Gold')
+        data_silver = compteMedailles(olympics, 'NOC', start_year, end_year, edition = saison, medal_type='Silver')
+        data_bronze = compteMedailles(olympics, 'NOC', start_year, end_year, edition = saison, medal_type='Bronze')
+
+        data = data_gold.merge(right = data_silver, on = 'NOC')
+        print(data_silver)
+        print(data)
+
+        # Getting the Model
+        self.model = pandasTableModel(data)
+
+        # Creating a QTableView
+        self.tableau_medailles =  QTableView()
+        self.tableau_medailles.setModel(self.model)
 
         #self.layout_specific.addStretch()
         self.layout_specific.addWidget(self.canvas)
