@@ -209,7 +209,6 @@ class Ong_Age(Onglet_generique):
                 if id_sport[i] == 1: df =  olympics
                 else : df = olympics[olympics.Sport==liste_sports[id_sport[i]]]
                 #print(liste_sports[id_sport[i]])
-                #print(df)
                 ages = compteMedailles(df, 'Age', start_year, end_year, edition = saison)
                 #print(ages)
                 hist_val.append(list(ages.Medal))
