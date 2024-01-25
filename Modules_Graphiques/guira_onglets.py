@@ -1,3 +1,9 @@
+if __name__ == "__main__":
+    from Olym import main
+    main()
+
+## Imports
+
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
@@ -12,8 +18,14 @@ from Modules_Graphiques.guira_slider import Slider
 from Modules_Traitement.guira_extract import liste_sports
 from Modules_Traitement.traitementV11012024 import compteMedailles, olympics
 
-
 import geopandas as gpd
+import pandas as pd
+
+countries = gpd.read_file('./data/map').loc[:, ['geometry', 'ISO_A3_EH']]
+medals = pd.DataFrame(columns = ['MEDALS'])
+countries = countries.join(medals)
+
+
 
 ## placeholders
 
@@ -28,12 +40,41 @@ def placeholder_histogram(N,sport_ID,start_year,end_year,saison):
 def placeholder_table() :
     pass
 
+
+def placeholder_map():
+    countries.MEDALS = randint(0,100,countries.shape[0])
 ## Widgets
 
 class ComboBox_Sports(QComboBox):
     def __init__(self):
         super().__init__()
         self.addItems(liste_sports)
+
+
+
+
+class pandasTableModel(QAbstractTableModel):
+    def __init__(self, data):
+        QAbstractTableModel.__init__(self)
+        self._data = data
+    def rowCount(self, parent=None):
+        return self._data.shape[0]
+    def columnCount(self, parnet=None):
+        return self._data.shape[1]+1
+    def data(self, index, role=Qt.DisplayRole):
+        if index.isValid():
+            if role == Qt.DisplayRole:
+                if index.column() == 0 :
+                    return str(self._data.index[index.row()])
+                else : return str(self._data.iloc[index.row(), index.column()-1])
+        return None
+    def headerData(self, col, orientation, role):
+        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
+            if col == 0 : return 'NOC'
+            return self._data.columns[col-1]
+        return None
+
+
 
 
 ## Onglets
@@ -62,14 +103,13 @@ class Ong_Carte(Onglet_generique):
 
 
         self.canvas = FigureCanvasQTAgg(Figure())
-        self.ax = self.canvas.figure.subplots()
+        self.ax, self.cax = self.canvas.figure.subplots(1,2,gridspec_kw={'width_ratios':[20,1]})
+        #self.cax = self.canvas.figure.subplots(1,2,2)
 
-        self.tableau_medailles = QTableWidget()
-        self.tableau_medailles.setRowCount(230)
-        self.tableau_medailles.setColumnCount(4)
-        horHeaders = ['NOC', 'Or','Argent','Bronze']
-        self.tableau_medailles.setHorizontalHeaderLabels(horHeaders)
-        self.tableau_medailles.resizeColumnsToContents()
+
+        # Creating a QTableView
+        self.tableau_medailles =  QTableView()
+
 
         #self.layout_specific.addStretch()
         self.layout_specific.addWidget(self.canvas)
@@ -78,17 +118,36 @@ class Ong_Carte(Onglet_generique):
         #self.layout_specific.addStretch()
         self.setLayout(self.layout_generic)
 
+        self.slider.slider.sliderReleased.connect(self._update)
+        self.slider.box_saison.currentIndexChanged.connect(self._update)
+
         self._update()
 
     def _update(self):
         self._update_table()
         self._update_map()
     def _update_table(self):
-        pass
+
+        start_year,end_year = self.slider.slider.sliderPosition()
+        saison = self.slider.box_saison.currentIndex() #0->tous, 1-> été, 2 -> Hiver
+
+        data_gold = compteMedailles(olympics, 'NOC', start_year, end_year, edition = saison, medal_type='Gold')
+        data_silver = compteMedailles(olympics, 'NOC', start_year, end_year, edition = saison, medal_type='Silver')
+        data_bronze = compteMedailles(olympics, 'NOC', start_year, end_year, edition = saison, medal_type='Bronze')
+
+        data = data_gold.merge(right = data_silver, on = 'NOC', how = 'outer')
+        data = data.merge(right = data_bronze, on = 'NOC', how = 'outer')
+        data = data.rename(columns={"Medal_x":"Or" , "Medal_y":"Argent", "Medal":"Bronze"})
+        data.sort_values(by = ["Or","Argent","Bronze"],ascending=False, inplace=True)
+        data[data.isna()] = 0
+        data = data.astype('int32')
+        # Getting the Model
+        self.model = pandasTableModel(data)
+        self.tableau_medailles.setModel(self.model)
     def _update_map(self):
         self.ax.clear()
-        countries = gpd.read_file('./Modules_Traitement/data/map')
-        countries.plot(color="lightgrey",ax=self.ax)
+        placeholder_map()
+        countries.plot(ax=self.ax, column = 'MEDALS', legend=True, cax=self.cax)
         self.canvas.draw()
 
 
@@ -168,7 +227,7 @@ class Ong_PIB(Onglet_generique):
     def __init__(self):
         super().__init__()
 
-        self.label = QLabel("Onglet PIB : Coming very soon...")
+        self.label = QLabel("Onglet PIB : Coming very soon... or not at all")
         self.layout_specific.addStretch()
         self.layout_specific.addWidget(self.label)
         self.layout_specific.addStretch()
@@ -180,12 +239,46 @@ class Ong_Rech(Onglet_generique):
     def __init__(self):
         super().__init__()
 
-        self.label = QLabel("Onglet Recherche : Coming less soon...")
+
+        self.label = QLabel("Onglet Recherche : Coming soon...")
+        label_name = QLabel("Nom :")
+        label_NOC = QLabel("NOC du pays :")
+        label_sport = QLabel("Sport :")
+
+        button_search = QPushButton("Rechercher")
+        button_search.clicked.connect(self.search)
+
+        self.textbox_name = QLineEdit()
+        self.textbox_NOC = QLineEdit()
+        self.textbox_sport = QLineEdit()
+
+
+        layoutV = QVBoxLayout()
+        #layoutV.addStretch()
+        layoutV.addWidget(label_name)
+        layoutV.addWidget(self.textbox_name)
+
+        layoutV.addStretch()
+        layoutV.addWidget(label_NOC)
+        layoutV.addWidget(self.textbox_NOC)
+
+        layoutV.addStretch()
+        layoutV.addWidget(label_sport)
+        layoutV.addWidget(self.textbox_sport)
+        layoutV.addStretch()
+
+        layoutV.addWidget(button_search)
+        #layoutV.addStretch()
+
+        self.layout_specific.addStretch()
+        self.layout_specific.addLayout(layoutV)
         self.layout_specific.addStretch()
         self.layout_specific.addWidget(self.label)
         self.layout_specific.addStretch()
         self.setLayout(self.layout_generic)
 
+    def search(self):
+        pass
 
 class Ong_Cred(QWidget):
     def __init__(self):
@@ -221,6 +314,7 @@ Bibilothèques utilisées :
     - matplotlib
     - superqt
     - sys
+    - re
 
 Merci à celles et ceux qui les développent et les maintiennent !
 
@@ -231,4 +325,3 @@ Développement / Interface : Colin Guirardel"""))
         layoutV.addStretch()
 
         self.setLayout(layoutV)
-
