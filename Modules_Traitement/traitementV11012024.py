@@ -1,14 +1,15 @@
 """
-    objectif: Première version du traitement du programme/IHM visant à exploiter; traiter
-et afficher des résultats sur le dataset suivant:
+    objectif: Première version du traitement du programme/IHM visant à exploiter; traiter 
+et afficher des résultats sur le dataset suivant: 
 https://www.kaggle.com/datasets/bhanupratapbiswas/olympic-data/
-
+    
     date: 18/11/2023 dernière mise à jour: 18/11/2023
     auteur: Gabriel Lecarme
 """
-
+    
 import numpy as np
 import pandas
+import geopandas as gpd
 
 SUMMER = 1
 WINTER = 2
@@ -16,6 +17,8 @@ ALL_SEASON = 0
 
 olympics = pandas.read_csv("./data/dataset_olympics.csv")
 noc = pandas.read_csv("./data/noc_region.csv")
+countries = gpd.read_file('./data/map').loc[:,['geometry','ADM0_A3','NAME']]
+correspondances = pandas.read_csv('./data/correspondances.csv')
 
 lignes = olympics.index
 columns = olympics.columns
@@ -37,19 +40,20 @@ def compteMedailles(df, category, start_year, end_year, medal_type = 'All', edit
     Returns:
         _type_: _description_
     """
-
+    
     df = df[~df.Medal.isna()] # Filtrage des lignes avec médaille
     if not(medal_type in ["Gold", "Silver", "Bronze", "All"]):
         raise ValueError('medal_type must be in ["Gold", "Silver", "Bronze", "All"]')
     if not(category in columns):
         raise ValueError('check your category')
-
+    
     formatdf = df[(df.Year >= start_year) & (df.Year <= end_year)]  # Filtrage par période
     if edition != ALL_SEASON:
         season = ["Summer", "Winter"][edition - 1]
         formatdf = formatdf[df.Season == season] # Edition
     if medal_type != 'All':
         formatdf = formatdf.loc[df.Medal == medal_type] # Type de médaille
+    
     compte = formatdf.loc[: ,[category, "Medal"]]
     dfgroupby = compte.groupby(category)    # Regroupement <pandas.core.groupby.generic.DataFrameGroupBy object at 0x000001A7E13A4D50>
     res = dfgroupby.count()   # Comptage
@@ -57,9 +61,19 @@ def compteMedailles(df, category, start_year, end_year, medal_type = 'All', edit
         res = res.sort_values('Medal', ascending = False) # Tri par nombre décroissant de médaille
     return res
 
+def constructionCarte(df, start_year, end_year, edition = ALL_SEASON):
+    res = compteMedailles(df, 'NOC', start_year, end_year, medal_type='All', edition = edition, sort = True)
+    res = res.merge(correspondances, left_index=True, right_on='NOC', how='outer')
+    res = res.groupby('ADM0_A3', dropna=False)
+    res = res.sum(numeric_only=True)
+    res = pandas.merge(countries, res, left_on='ADM0_A3', right_index=True, how='left')
+    return res
+    
 def main():
-    res = compteMedailles(olympics, 'Age', 1896, 2010, edition = SUMMER, sort = True)
+    resultat = compteMedailles(olympics, 'NOC', 1996, 2012, medal_type='All', edition = ALL_SEASON, sort = False)
+    print(resultat)
+    res = constructionCarte(olympics, 1994, 2020, edition = ALL_SEASON)
     print(res)
-
+    
 if __name__ == "__main__":
     main()
