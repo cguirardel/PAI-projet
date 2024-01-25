@@ -45,11 +45,12 @@ for noc in missing1:
 
 ## mise en correspondance 'à la main' pour les pays restants
 
-for noc in missing2:
-    name = noc_region.reg[noc_region.noc_region==noc].values[0]
-    print(name)
+if False:
+    for noc in missing2:
+        name = noc_region.reg[noc_region.noc_region==noc].values[0]
+        print(name)
 
-print(sort(countries.NAME.unique()))
+# print(sort(countries.NAME.unique()))
 
 equivalent_names = {'Individual Olympic Athletes' : NaN
                     'Refugee Olympic Team' : NaN
@@ -57,55 +58,44 @@ equivalent_names = {'Individual Olympic Athletes' : NaN
                     'Czech Republic' : 'Czechia'
                     'Republic of Congo' : 'Dem. Rep. Congo'
                     'South Sudan' : 'S. Sudan'
+                    'Curacao' : 'Netherlandas'
+                    'Andorra' : NaN # pas de medailles anyways
+                    'Antigua' : NaN
+                    'Aruba' : NaN
+                    'American Samoa' : 'United States of America'
+                    'Barbados' : NaN
+                    'Bermuda' : NaN
+                    'Cayman Islands' : NaN
+                    'Cook Island' : NaN
+                    'Comoros' : NaN
+                    'Cape Verde' : NaN
+                    'Dominica' : NaN
+                    'Micronesia' : NaN
+                    'Equatorial Guinea' : NaN
+                    'Grenada' : NaN
+                    'Guam' : NaN
+                    'Virgin Islands, US' : 'United States of America'
+                    'Virgin Islands, British' : 'United Kingdom'
+                    'Kiribati' : NaN
+                    'Saint Lucia' : NaN
+                    'Liechtenstein' : NaN
+                    'Maldives' : NaN
+                    'Marshall Islands' : NaN
+                    'Malta' : NaN
+                    'Monaco' : NaN
+                    'Mauritius' : NaN
+                    'Nauru' : NaN
+                    'Palau' : NaN
+                    'Samoa' : NaN
+                    'Seychelles' : NaN
+                    'Singapore' : NaN
+                    'Saint Kitts' : NaN
+                    'San Marino' : 'Italy' # pas de médailles anyways
+                    'Sao Tome and Principe' : NaN
+                    'Tonga' : NaN
+                    'Tuvalu' : NaN
+                    'Saint Vincent' : NaN
+                    'Trinidad' : NaN
                     }
 
 
-
-# """
-#
-# Curacao
-# Andorra
-# Antigua
-# Aruba
-# American Samoa
-# Barbados
-# Bermuda
-#
-# Cayman Islands
-#
-# Cook Island
-# Comoros
-# Cape Verde
-# Dominica
-# Micronesia
-# Equatorial Guinea
-# Grenada
-# Guam
-#
-# Virgin Islands, US
-# Virgin Islands, British
-# Kiribati
-# Saint Lucia
-# Liechtenstein
-# Maldives
-# Marshall Islands
-# Malta
-# Monaco
-# Mauritius
-# Nauru
-# Palau
-#
-# Samoa
-# Seychelles
-# Singapore
-# Saint Kitts
-# San Marino
-#
-# Sao Tome and Principe
-# Czech Republic
-# Tonga
-# Tuvalu
-#
-# Saint Vincent
-# Trinidad
-# """
