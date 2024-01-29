@@ -29,20 +29,25 @@ countries = countries.join(medals)
 
 ## placeholders
 
-from numpy.random import randint
+need_placeholders = True
 
-def placeholder_histogram(N,sport_ID,start_year,end_year,saison):
-    #print(start_year,end_year,saison)
-    h = randint(16,30,N)
-    return h
+if need_placeholders :
+    from numpy.random import randint
+    from numpy import NaN
+
+    def placeholder_histogram(N,sport_ID,start_year,end_year,saison):
+        #print(start_year,end_year,saison)
+        h = randint(16,30,N)
+        return h
 
 
-def placeholder_table() :
-    pass
+    def placeholder_table() :
+        pass
 
 
-def placeholder_map():
-    countries.MEDALS = randint(0,100,countries.shape[0])
+    def placeholder_map():
+        countries.MEDALS = randint(0,100,countries.shape[0])
+        countries.loc[4,'MEDALS'] = NaN
 ## Widgets
 
 class ComboBox_Sports(QComboBox):
@@ -53,7 +58,7 @@ class ComboBox_Sports(QComboBox):
 
 
 
-class pandasTableModel(QAbstractTableModel):
+class pandasTableModel_Medal(QAbstractTableModel):
     def __init__(self, data):
         QAbstractTableModel.__init__(self)
         self._data = data
@@ -72,6 +77,25 @@ class pandasTableModel(QAbstractTableModel):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
             if col == 0 : return 'NOC'
             return self._data.columns[col-1]
+        return None
+
+
+class pandasTableModel_Rech(QAbstractTableModel):
+    def __init__(self, data):
+        QAbstractTableModel.__init__(self)
+        self._data = data
+    def rowCount(self, parent=None):
+        return self._data.shape[0]
+    def columnCount(self, parnet=None):
+        return self._data.shape[1]
+    def data(self, index, role=Qt.DisplayRole):
+        if index.isValid():
+            if role == Qt.DisplayRole:
+                return str(self._data.iloc[index.row(), index.column()])
+        return None
+    def headerData(self, col, orientation, role):
+        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
+            return self._data.columns[col]
         return None
 
 
@@ -142,12 +166,14 @@ class Ong_Carte(Onglet_generique):
         data[data.isna()] = 0
         data = data.astype('int32')
         # Getting the Model
-        self.model = pandasTableModel(data)
+        self.model = pandasTableModel_Medal(data)
         self.tableau_medailles.setModel(self.model)
     def _update_map(self):
         self.ax.clear()
+        self.cax.clear()
         placeholder_map()
-        countries.plot(ax=self.ax, column = 'MEDALS', legend=True, cax=self.cax)
+        missing_kwds = dict(color='grey', label='No Data')
+        countries.plot(ax=self.ax, column = 'MEDALS', legend=True,missing_kwds=missing_kwds, cax=self.cax)
         self.canvas.draw()
 
 
@@ -251,6 +277,7 @@ class Ong_Rech(Onglet_generique):
         self.textbox_NOC = QLineEdit()
         self.textbox_sport = QLineEdit()
 
+        self.tableau_recherche =  QTableView()
 
         layoutV = QVBoxLayout()
         #layoutV.addStretch()
@@ -269,15 +296,28 @@ class Ong_Rech(Onglet_generique):
         layoutV.addWidget(button_search)
         #layoutV.addStretch()
 
-        self.layout_specific.addStretch()
+        #self.layout_specific.addStretch()
         self.layout_specific.addLayout(layoutV)
-        self.layout_specific.addStretch()
-        self.layout_specific.addWidget(self.label)
-        self.layout_specific.addStretch()
+        #self.layout_specific.addStretch()
+        self.layout_specific.addWidget(self.tableau_recherche)
+        #self.layout_specific.addStretch()
         self.setLayout(self.layout_generic)
 
+        self.search()
+
     def search(self):
-        pass
+        start_year,end_year = self.slider.slider.sliderPosition()
+        saison = self.slider.box_saison.currentIndex() #0->tous, 1-> été, 2 -> Hiver
+
+
+        nameValue = self.textbox_name.text()
+        NOCValue = self.textbox_NOC.text()
+        sportValue = self.textbox_sport.text()
+        data = olympics.loc[:,['Name', 'NOC', 'Sport']][olympics.Name.str.contains(nameValue) &  olympics.NOC.str.contains(NOCValue) & olympics.Sport.str.contains(sportValue)]
+        data = data.drop_duplicates()
+
+        self.model = pandasTableModel_Rech(data)
+        self.tableau_recherche.setModel(self.model)
 
 class Ong_Cred(QWidget):
     def __init__(self):
