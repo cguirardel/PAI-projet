@@ -61,29 +61,39 @@ def compteMedailles(df, category, start_year, end_year, medal_type = 'All', edit
         res = res.sort_values('Medal', ascending = False) # Tri par nombre décroissant de médaille
     return res
 
-def constructionCarte(df, start_year, end_year, edition = ALL_SEASON):
-    """Ajoute au GeoDataFrame une colonne avec un compte des médailles sur la période donnée
+def constructionCarte(df, gpd_df, start_year, end_year, edition = ALL_SEASON):
+    """
 
-    Args:
-        df (_type_): _description_
-        start_year (_type_): _description_
-        end_year (_type_): _description_
-        edition (_type_, optional): _description_. Defaults to ALL_SEASON.
+        Parameters
+        ----------
+        df : TYPE
+            DESCRIPTION.
+        gpd_df : TYPE
+            DESCRIPTION.
+        start_year : TYPE
+            DESCRIPTION.
+        end_year : TYPE
+            DESCRIPTION.
+        edition : TYPE, optional
+            DESCRIPTION. The default is ALL_SEASON.
+    
+        Returns
+        -------
+        None.
 
-    Returns:
-        _type_: _description_
     """
     compte = compteMedailles(df, 'NOC', start_year, end_year, medal_type='All', edition = edition, sort = True)
     corres = compte.merge(correspondances, left_index=True, right_on='NOC', how='outer')
     dfgroupby = corres.groupby('ADM0_A3', dropna=False) # groupement par code ADM0 en gardant les pays qui ne font pas de médailles
     res = dfgroupby.sum(numeric_only=True) # somme des médailles et suppression de la colonne NOC
-    res = pandas.merge(countries, res, left_on='ADM0_A3', right_index=True, how='left') # Ajout de la colonne au GeoDataFrame
+    res = pandas.merge(gpd_df, res, left_on='ADM0_A3', right_index=True, how='left') # Ajout de la colonne au GeoDataFrame
+    res.rename({"Medal" : "MEDALS"}, inplace=True)
     return res
     
 def main():
     resultat = compteMedailles(olympics, 'NOC', 1996, 2012, medal_type='All', edition = ALL_SEASON, sort = False)
     print(resultat)
-    res = constructionCarte(olympics, 1994, 2020, edition = ALL_SEASON)
+    res = constructionCarte(olympics, countries,1994, 2020, edition = ALL_SEASON)
     print(res)
     
 if __name__ == "__main__":
