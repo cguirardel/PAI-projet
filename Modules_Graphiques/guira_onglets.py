@@ -16,15 +16,10 @@ from matplotlib.figure import Figure
 from Modules_Graphiques.guira_slider import Slider
 
 from Modules_Traitement.guira_extract import liste_sports
-from Modules_Traitement.traitementV11012024 import compteMedailles, olympics
+from Modules_Traitement.traitementV11012024 import compteMedailles, constructionCarte, olympics, countries, correspondances
 
-import geopandas as gpd
-import pandas as pd
-
-countries = gpd.read_file('./data/map').loc[:, ['geometry', 'ISO_A3_EH']]
-medals = pd.DataFrame(columns = ['MEDALS'])
-countries = countries.join(medals)
-
+# import geopandas as gpd
+# import pandas as pd
 
 
 ## placeholders
@@ -173,7 +168,12 @@ class Ong_Carte(Onglet_generique):
         self.cax.clear()
         placeholder_map()
         missing_kwds = dict(color='grey', label='No Data')
-        countries.plot(ax=self.ax, column = 'MEDALS', legend=True,missing_kwds=missing_kwds, cax=self.cax)
+
+        start_year,end_year = self.slider.slider.sliderPosition()
+        saison = self.slider.box_saison.currentIndex() #0->tous, 1-> été, 2 -> Hiver
+
+        data = constructionCarte(olympics, countries, start_year,end_year,saison)
+        data.plot(ax=self.ax, column = 'MEDALS', legend=True,missing_kwds=missing_kwds, cax=self.cax)
         self.canvas.draw()
 
 
