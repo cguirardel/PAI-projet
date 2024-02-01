@@ -16,7 +16,7 @@
 #     - matplotlib
 #     - superqt
 #     - sys
-#     - re
+
 
 # Merci à celles et ceux qui les développent et les maintiennent !
 

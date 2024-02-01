@@ -173,7 +173,7 @@ class Ong_Carte(Onglet_generique):
         saison = self.slider.box_saison.currentIndex() #0->tous, 1-> été, 2 -> Hiver
 
         data = constructionCarte(olympics, countries, start_year,end_year,saison)
-        data.plot(ax=self.ax, column = 'MEDALS', legend=True,missing_kwds=missing_kwds, cax=self.cax)
+        data.plot(ax=self.ax, column = 'Medal', legend=True,missing_kwds=missing_kwds, cax=self.cax)
         self.canvas.draw()
 
 
@@ -353,7 +353,6 @@ Bibilothèques utilisées :
     - matplotlib
     - superqt
     - sys
-    - re
 
 Merci à celles et ceux qui les développent et les maintiennent !
 

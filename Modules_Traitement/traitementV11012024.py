@@ -76,7 +76,7 @@ def constructionCarte(df, gpd_df, start_year, end_year, edition = ALL_SEASON):
             DESCRIPTION.
         edition : TYPE, optional
             DESCRIPTION. The default is ALL_SEASON.
-    
+
         Returns
         -------
         None.
@@ -87,7 +87,6 @@ def constructionCarte(df, gpd_df, start_year, end_year, edition = ALL_SEASON):
     dfgroupby = corres.groupby('ADM0_A3', dropna=False) # groupement par code ADM0 en gardant les pays qui ne font pas de médailles
     res = dfgroupby.sum(numeric_only=True) # somme des médailles et suppression de la colonne NOC
     res = pandas.merge(gpd_df, res, left_on='ADM0_A3', right_index=True, how='left') # Ajout de la colonne au GeoDataFrame
-    res.rename({"Medal" : "MEDALS"}, inplace=True)
     return res
 
 def main():
