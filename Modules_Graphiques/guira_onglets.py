@@ -16,7 +16,7 @@ from matplotlib.figure import Figure
 from Modules_Graphiques.guira_slider import Slider
 
 from Modules_Traitement.guira_extract import liste_sports
-from Modules_Traitement.traitementV11012024 import compteMedailles, constructionCarte, olympics, countries, correspondances
+from Modules_Traitement.traitementV11012024 import compteMedailles, constructionCarte, recherche, olympics, countries, correspondances
 
 # import geopandas as gpd
 # import pandas as pd
@@ -264,6 +264,8 @@ class Ong_Rech(Onglet_generique):
     def __init__(self):
         super().__init__()
 
+        self.slider.slider.sliderReleased.connect(self.search)
+        self.slider.box_saison.currentIndexChanged.connect(self.search)
 
         self.label = QLabel("Onglet Recherche : Coming soon...")
         label_name = QLabel("Nom :")
@@ -309,12 +311,10 @@ class Ong_Rech(Onglet_generique):
         start_year,end_year = self.slider.slider.sliderPosition()
         saison = self.slider.box_saison.currentIndex() #0->tous, 1-> été, 2 -> Hiver
 
-
         nameValue = self.textbox_name.text()
         NOCValue = self.textbox_NOC.text()
         sportValue = self.textbox_sport.text()
-        data = olympics.loc[:,['Name', 'NOC', 'Sport']][olympics.Name.str.contains(nameValue) &  olympics.NOC.str.contains(NOCValue) & olympics.Sport.str.contains(sportValue)]
-        data = data.drop_duplicates()
+        data = recherche(olympics, start_year, end_year, saison, nameValue=nameValue, NOCValue=NOCValue, sportValue=sportValue)
 
         self.model = pandasTableModel_Rech(data)
         self.tableau_recherche.setModel(self.model)

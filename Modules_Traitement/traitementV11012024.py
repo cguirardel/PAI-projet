@@ -89,10 +89,19 @@ def constructionCarte(df, gpd_df, start_year, end_year, edition = ALL_SEASON):
     res = pandas.merge(gpd_df, res, left_on='ADM0_A3', right_index=True, how='left') # Ajout de la colonne au GeoDataFrame
     return res
 
+def recherche(df, start_year, end_year, edition = ALL_SEASON, nameValue='', NOCValue='', sportValue=''):
+    data = df[(df.Year >= start_year) & (df.Year <= end_year)]
+    if edition != ALL_SEASON:
+        season = ["Summer", "Winter"][edition - 1]
+        data = data[df.Season == season]
+    data = data.loc[:,['Name', 'NOC', 'Sport']][data.Name.str.contains(nameValue) &  data.NOC.str.contains(NOCValue) & data.Sport.str.contains(sportValue)]
+    data = data.drop_duplicates()
+    return data
+
 def main():
     resultat = compteMedailles(olympics, 'NOC', 1996, 2012, medal_type='All', edition = ALL_SEASON, sort = False)
     print(resultat)
-    res = constructionCarte(olympics, countries,1994, 2020, edition = ALL_SEASON)
+    res = constructionCarte(olympics, countries, 1994, 2020, edition = ALL_SEASON)
     print(res)
 
 if __name__ == "__main__":
