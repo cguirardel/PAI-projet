@@ -94,7 +94,7 @@ def recherche(df, start_year, end_year, edition = ALL_SEASON, nameValue='', NOCV
     if edition != ALL_SEASON:
         season = ["Summer", "Winter"][edition - 1]
         data = data[df.Season == season]
-    data = data.loc[:,['Name', 'NOC', 'Sport']][data.Name.str.contains(nameValue) &  data.NOC.str.contains(NOCValue) & data.Sport.str.contains(sportValue)]
+    data = data.loc[:,['Name', 'NOC', 'Sport']][data.Name.str.contains(nameValue,case=False) &  data.NOC.str.contains(NOCValue,case=False) & data.Sport.str.contains(sportValue,case=False)]
     data = data.drop_duplicates()
     return data
 

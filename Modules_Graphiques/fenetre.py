@@ -12,15 +12,17 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 import numpy as np
+import platform
 
 from Modules_Graphiques.guira_slider import Slider
 from Modules_Graphiques.guira_onglets import Ong_Carte, Ong_Age, Ong_PIB, Ong_Rech, Ong_Cred
 
 
-# This part changes taskbar icon for windows
-import ctypes
-myappid = 'Olympy.project' # arbitrary string
-ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+if platform.system() == 'Windows':
+    # This part changes taskbar icon for windows
+    import ctypes
+    myappid = 'Olympy.project' # arbitrary string
+    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 
 class MaFenetre(QTabWidget):
